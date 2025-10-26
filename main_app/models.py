@@ -27,3 +27,17 @@ class Task(models.Model):
     
     def __str__(self):
         return f'[{self.get_priority_display()}] - {self.task}'
+
+class Distraction(models.Model):
+    distraction_name = models.CharField()
+    distraction_icon = models.ImageField(upload_to='main_app/static/images/')
+    
+    def __str__(self):
+        return f'{self.distraction_name.capitalize()}'
+
+class Tag(models.Model):
+    tag_name = models.CharField()
+    tag_color = models.CharField()
+
+    def __str__(self):
+        return f'{self.tag_name.capitalize()} Tag'
