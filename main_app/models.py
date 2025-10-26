@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+
 
 # Create your models here.
 class ToDoList(models.Model):
@@ -41,3 +43,43 @@ class Tag(models.Model):
 
     def __str__(self):
         return f'{self.tag_name.capitalize()} Tag'
+
+User = get_user_model()
+
+LOG_STATUS = (
+    ('S', 'Started'),
+    ('P', 'Paused'),
+    ('E', 'Ended')
+)
+
+FOCUS_LEVEL = (
+    (1, 'Distracted'),
+    (2, 'Unfocused'),
+    (3, 'Average'),
+    (4, 'Focused'),
+    (5, 'Flow State')
+)
+
+class FocusLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    todolist = models.ForeignKey(ToDoList, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    distraction = models.ManyToManyField(Distraction)
+    start_time = models.DateTimeField('Started At:', auto_now_add=True)
+    end_time = models.DateTimeField('Ended At:', auto_now=True)
+    total_duration = models.FloatField()
+    status = models.CharField(max_length=1, choices=LOG_STATUS, default=LOG_STATUS[0][0])
+    focus_level = models.CharField(max_length=1, choices=FOCUS_LEVEL, default=FOCUS_LEVEL[2][0])
+    outcomes = models.TextField()
+    created_at = models.DateField('FocusLog Session Creation Date', auto_now_add=True)
+
+    # Resource: https://stackoverflow.com/questions/67102354/how-to-subtract-two-datetime-field-in-django-model-and-keep-the-subtracted-value
+    def save(self,*args,**kwargs):
+        if self.start_time and self.end_time:
+            time = self.end_time - self.start_time
+            # Resource: https://stackoverflow.com/questions/14190045/how-do-i-convert-datetime-timedelta-to-minutes-hours-in-python
+            self.total_duration = round(time.total_seconds() / 3600, 2)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'FocusLog Session #{self.id}'
