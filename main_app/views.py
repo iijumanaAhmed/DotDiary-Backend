@@ -17,6 +17,16 @@ class FocusLogsIndex(APIView):
         serializer = FocusLogSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    def post(self, request):
+        try:
+            serializer = FocusLogSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 class TagsIndex(APIView):
     def get(self, request):
         try:

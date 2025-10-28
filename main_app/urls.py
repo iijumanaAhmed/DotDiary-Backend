@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import Homepage, FocusLogsIndex
+from .views import Homepage, FocusLogsIndex, TagsIndex
 urlpatterns = [
     path('', Homepage.as_view(), name='homepage'),
-    path('focusLogs/', FocusLogsIndex.as_view(), name='focusLogs_index')
+    path('focusLogs/', FocusLogsIndex.as_view(), name='focusLogs_index'),
+    path('tags/', TagsIndex.as_view(), name='tags_index'),
 ]
