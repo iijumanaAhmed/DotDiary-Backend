@@ -50,6 +50,14 @@ class FocusLogSession(APIView):
         except Exception as error:
             return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    def delete(self, request, session_id):
+        try:
+            queryset = get_object_or_404(FocusLog, id=session_id)
+            queryset.delete()
+            return Response({'message': f'Your Focus session with id #{session_id} has been deleted'}, status=status.HTTP_204_NO_CONTENT)
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 class TagsIndex(APIView):
     def get(self, request):
         try:
