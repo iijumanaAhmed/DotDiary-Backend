@@ -61,13 +61,13 @@ FOCUS_LEVEL = (
 )
 
 class FocusLog(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    todolist = models.OneToOneField(ToDoList, on_delete=models.CASCADE)
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # todolist = models.OneToOneField(ToDoList, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.SET_NULL, null=True)
     distraction = models.ManyToManyField(Distraction)
     start_time = models.DateTimeField('Started At:', auto_now_add=True)
     end_time = models.DateTimeField('Ended At:', null=True, blank=True)
-    total_duration =  models.DurationField(null=True, blank=True)
+    total_duration = models.DurationField(null=True, blank=True)
     status = models.CharField(max_length=1, choices=LOG_STATUS, default=LOG_STATUS[0][0])
     focus_level = models.CharField(max_length=1, choices=FOCUS_LEVEL, default=FOCUS_LEVEL[2][0])
     outcomes = models.TextField()
