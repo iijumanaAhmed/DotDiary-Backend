@@ -2,8 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import FocusLog, Tag
-from .serializers import FocusLogSerializer, TagSerializer
+from .models import FocusLog, Tag, Distraction
+from .serializers import FocusLogSerializer, TagSerializer, DistractionSerializer
 
 from django.shortcuts import get_object_or_404
 
@@ -34,7 +34,14 @@ class FocusLogSession(APIView):
         try:
             queryset = get_object_or_404(FocusLog, id=session_id)
             serializer = FocusLogSerializer(queryset)
-            return Response(serializer.data)
+            session_distractions = Distraction.objects.filter(focuslog=session_id)
+            distractions_list = Distraction.objects.exclude(id__in = queryset.distraction.all().values_list('id'))
+            
+            data = serializer.data
+            data['session_distractions'] = DistractionSerializer(session_distractions, many=True).data
+            data['distractions_list'] = DistractionSerializer(distractions_list, many=True).data
+            
+            return Response(data)
         except Exception as error:
             return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
@@ -64,5 +71,37 @@ class TagsIndex(APIView):
             queryset = Tag.objects.all()
             serializer = TagSerializer(queryset, many=True)
             return Response(serializer.data)
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class AssignDistraction(APIView):
+    def patch(self, request, session_id, distraction_id):
+        try:
+            session = get_object_or_404(FocusLog, id=session_id)
+            distractions = get_object_or_404(Distraction, id=distraction_id)
+            session.distraction.add(distractions)
+            
+            session_distractions = Distraction.objects.filter(focuslog=session_id)
+            distractions_list = Distraction.objects.exclude(id__in = session.distraction.all().values_list('id'))
+            return Response({
+                "session_distractions": DistractionSerializer(session_distractions, many=True).data,
+                "distractions_list": DistractionSerializer(distractions_list, many=True).data
+                }, status=status.HTTP_200_OK)
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class UnassignDistraction(APIView):
+    def patch(self, request, session_id, distraction_id):
+        try:
+            session = get_object_or_404(FocusLog, id=session_id)
+            distractions = get_object_or_404(Distraction, id=distraction_id)
+            session.distraction.remove(distractions)
+            
+            session_distractions = Distraction.objects.filter(focuslog=session_id)
+            distractions_list = Distraction.objects.exclude(id__in = session.distraction.all().values_list('id'))
+            return Response({
+                "session_distractions": DistractionSerializer(session_distractions, many=True).data,
+                "distractions_list": DistractionSerializer(distractions_list, many=True).data
+                }, status=status.HTTP_200_OK)
         except Exception as error:
             return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
