@@ -2,8 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import FocusLog, Tag, Distraction
-from .serializers import FocusLogSerializer, TagSerializer, DistractionSerializer
+from .models import FocusLog, Tag, Distraction, ToDoList
+from .serializers import FocusLogSerializer, TagSerializer, DistractionSerializer, ToDoListSerializer
 
 from django.shortcuts import get_object_or_404
 
@@ -103,5 +103,24 @@ class UnassignDistraction(APIView):
                 "session_distractions": DistractionSerializer(session_distractions, many=True).data,
                 "distractions_list": DistractionSerializer(distractions_list, many=True).data
                 }, status=status.HTTP_200_OK)
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class ToDoListsIndex(APIView):
+    def get(self, request):
+        try:
+            queryset = ToDoList.objects.all()
+            serializer = ToDoListSerializer(queryset, many=True)
+            return Response(serializer.data)
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def post(self, request):
+        try:
+            serializer = ToDoListSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as error:
             return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
