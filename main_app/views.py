@@ -124,3 +124,12 @@ class ToDoListsIndex(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as error:
             return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class ToDoListDetail(APIView):
+    def get(self, request, todolist_id):
+        try:
+            queryset = get_object_or_404(ToDoList, id=todolist_id)
+            serializer = ToDoListSerializer(queryset)
+            return Response(serializer.data)
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
