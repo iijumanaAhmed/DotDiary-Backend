@@ -145,3 +145,11 @@ class ToDoListDetail(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as error:
             return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def delete(self, request, todolist_id):
+        try:
+            queryset = get_object_or_404(ToDoList, id=todolist_id)
+            queryset.delete()
+            return Response({'message': f'Your todolist with id #{todolist_id} has been deleted'}, status=status.HTTP_204_NO_CONTENT)
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
