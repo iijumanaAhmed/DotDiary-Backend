@@ -172,3 +172,32 @@ class TasksIndex(APIView):
             serializer= TaskSerializer(queryset, many=True)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TaskToDo(APIView):
+    def get(self, request, todolist_id, task_id):
+        try:
+            queryset = get_object_or_404(Task.objects.filter(todolist=todolist_id), id=task_id)
+            serializer = TaskSerializer(queryset)
+            return Response(serializer.data)
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def put(self, request, todolist_id, task_id):
+        try:
+            queryset = get_object_or_404(Task.objects.filter(todolist=todolist_id), id=task_id)
+            serializer = TaskSerializer(queryset, data=request.data)
+            
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def delete(self, request, todolist_id, task_id):
+        try:
+            queryset = get_object_or_404(Task.objects.filter(todolist=todolist_id), id=task_id)
+            queryset.delete()
+            return Response({'message': f'Your task number #{task_id} has been deleted'}, status=status.HTTP_204_NO_CONTENT)
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import Homepage, FocusLogsIndex, FocusLogSession, TagsIndex, AssignDistraction, UnassignDistraction, ToDoListsIndex, ToDoListDetail, TasksIndex
+from .views import Homepage, FocusLogsIndex, FocusLogSession, TagsIndex, AssignDistraction, UnassignDistraction, ToDoListsIndex, ToDoListDetail, TasksIndex, TaskToDo
 urlpatterns = [
     path('', Homepage.as_view(), name='homepage'),
     path('focusLogs/', FocusLogsIndex.as_view(), name='focusLogs_index'),
@@ -9,5 +9,6 @@ urlpatterns = [
     path('focusLogs/<int:session_id>/unassignDistraction/<int:distraction_id>/', UnassignDistraction.as_view(), name='unassign_distraction'),
     path('toDoLists/', ToDoListsIndex.as_view(), name='toDoLists_index'),
     path('toDoLists/<int:todolist_id>/', ToDoListDetail.as_view(), name='toDoList_detail'),
-    path('toDoLists/<int:todolist_id>/tasks/', TasksIndex.as_view(), name='tasks_index')
+    path('toDoLists/<int:todolist_id>/tasks/', TasksIndex.as_view(), name='tasks_index'),
+    path('toDoLists/<int:todolist_id>/tasks/<int:task_id>/', TaskToDo.as_view(), name='task_todo')
 ]
