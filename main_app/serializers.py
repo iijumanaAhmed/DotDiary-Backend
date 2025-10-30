@@ -1,7 +1,14 @@
 from rest_framework import serializers
-from .models import ToDoList, Distraction, Tag, FocusLog
+from .models import Task, ToDoList, Distraction, Tag, FocusLog
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = '__all__'
 
 class ToDoListSerializer(serializers.ModelSerializer):
+    tasks = TaskSerializer(many=True, read_only=True)
+
     class Meta:
         model = ToDoList
         fields = '__all__'

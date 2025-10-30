@@ -22,7 +22,7 @@ PRIORITY = (
 )
 
 class Task(models.Model):
-    todolist = models.ForeignKey(ToDoList, on_delete=models.CASCADE)
+    todolist = models.ForeignKey(ToDoList, on_delete=models.CASCADE, related_name='tasks')
     task = models.CharField()
     is_done = models.CharField(max_length=1, choices=STATUS, default=STATUS[0][0])
     priority = models.CharField(max_length=1, choices=PRIORITY, default=PRIORITY[0][0])
