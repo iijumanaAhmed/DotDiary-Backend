@@ -2,7 +2,21 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
+from .world_time_zone import TIMEZONES
+
 # Create your models here.
+User = get_user_model()
+
+GENDER = (
+    ('F', 'Female'),
+    ('M', 'Male')
+)
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    gender = models.CharField(max_length=1, choices=GENDER)
+    time_zone = models.CharField(choices=TIMEZONES)
+
 class ToDoList(models.Model):
     list_title = models.CharField()
     created_at = models.DateField('ToDoList Creation Date', auto_now_add=True)
@@ -43,8 +57,6 @@ class Tag(models.Model):
 
     def __str__(self):
         return f'{self.tag_name.capitalize()} Tag'
-
-User = get_user_model()
 
 LOG_STATUS = (
     ('S', 'Started'),
