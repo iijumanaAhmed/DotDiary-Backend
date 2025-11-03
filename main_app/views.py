@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import FocusLog, Tag, Distraction, ToDoList, Task
-from .serializers import FocusLogSerializer, TagSerializer, DistractionSerializer, ToDoListSerializer, TaskSerializer
+from .serializers import UserSerializer, FocusLogSerializer, TagSerializer, DistractionSerializer, ToDoListSerializer, TaskSerializer
 
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
@@ -49,6 +49,36 @@ class SignupUser(APIView):
                     {"id": user.id, "username": user.username, "email": user.email},
                     status=status.HTTP_201_CREATED,
                 )
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class UserProfile(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id):
+        try:
+            user = get_object_or_404(User, id=user_id)
+            serializer = UserSerializer(user)
+            return Response(serializer.data)
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def put(self, request, user_id):
+        try:
+            user = get_object_or_404(User, id=user_id)
+            serializer = UserSerializer(user, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def delete(self, request, user_id):
+        try:
+            user = get_object_or_404(User, id=user_id)
+            user.delete()
+            return Response({'message': f'Your account has been deleted'}, status=status.HTTP_204_NO_CONTENT)
         except Exception as error:
             return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import Homepage, FocusLogsIndex, FocusLogSession, TagsIndex, AssignDistraction, UnassignDistraction, ToDoListsIndex, ToDoListDetail, TasksIndex, TaskToDo, SignupUser
+from .views import Homepage, FocusLogsIndex, FocusLogSession, TagsIndex, AssignDistraction, UnassignDistraction, ToDoListsIndex, ToDoListDetail, TasksIndex, TaskToDo, SignupUser, UserProfile
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
@@ -15,5 +15,6 @@ urlpatterns = [
     path('toDoLists/<int:todolist_id>/tasks/<int:task_id>/', TaskToDo.as_view(), name='task_todo'),
     path('login/', TokenObtainPairView.as_view(), name='login'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('signup/', SignupUser.as_view(), name='signup')
+    path('signup/', SignupUser.as_view(), name='signup'),
+    path('profile/<int:user_id>/', UserProfile.as_view(), name='user_profile')
 ]
