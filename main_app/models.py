@@ -1,21 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.utils import timezone
-
-from .world_time_zone import TIMEZONES
 
 # Create your models here.
 User = get_user_model()
-
-GENDER = (
-    ('F', 'Female'),
-    ('M', 'Male')
-)
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    gender = models.CharField(max_length=1, choices=GENDER)
-    time_zone = models.CharField(choices=TIMEZONES)
 
 class ToDoList(models.Model):
     list_title = models.CharField()
@@ -25,8 +12,8 @@ class ToDoList(models.Model):
         return f'{self.list_title} To Do List'
 
 STATUS = (
-    ('N', 'Not Done'),
-    ('Y', 'Done')
+    (False, 'Not Done'),
+    (True, 'Done')
 )
 
 PRIORITY = (
@@ -38,7 +25,7 @@ PRIORITY = (
 class Task(models.Model):
     todolist = models.ForeignKey(ToDoList, on_delete=models.CASCADE, related_name='tasks')
     task = models.CharField()
-    is_done = models.CharField(max_length=1, choices=STATUS, default=STATUS[0][0])
+    is_done = models.CharField(choices=STATUS, default=STATUS[0][0])
     priority = models.CharField(max_length=1, choices=PRIORITY, default=PRIORITY[0][0])
     
     def __str__(self):
@@ -65,34 +52,23 @@ LOG_STATUS = (
 )
 
 FOCUS_LEVEL = (
-    ('1', 'Distracted'),
-    ('2', 'Unfocused'),
-    ('3', 'Average'),
-    ('4', 'Focused'),
-    ('5', 'Flow State')
+    (1, 'Distracted'),
+    (2, 'Unfocused'),
+    (3, 'Average'),
+    (4, 'Focused'),
+    (5, 'Flow State')
 )
 
 class FocusLog(models.Model):
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
-    todolist = models.OneToOneField(ToDoList, on_delete=models.CASCADE, null=True)
-    tag = models.ForeignKey(Tag, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.SET_NULL, null=True, blank=True)
     distraction = models.ManyToManyField(Distraction)
-    start_time = models.DateTimeField('Started At:', auto_now_add=True)
-    end_time = models.DateTimeField('Ended At:', null=True, blank=True)
+    start_time = models.DurationField('Started At:', null=True, blank=True)
+    end_time = models.DurationField('Ended At:', null=True, blank=True)
     total_duration =  models.DurationField(null=True, blank=True)
-    status = models.CharField(max_length=1, choices=LOG_STATUS, null=True)
-    focus_level = models.CharField(max_length=1, choices=FOCUS_LEVEL, null=True)
+    focus_level = models.CharField(max_length=1, choices=FOCUS_LEVEL, null=True, blank=True)
     outcomes = models.TextField(blank=True)
-    created_at = models.DateField('FocusLog Session Creation Date', auto_now_add=True)
-
-    def save(self,*args,**kwargs):
-        #  Resource : https://docs.djangoproject.com/en/5.2/topics/i18n/timezones/
-        now = timezone.now()
-        self.end_time = now
-        
-        if self.start_time and self.end_time:
-            self.total_duration = self.end_time - self.start_time
-        super().save(*args, **kwargs)
-
+    todolist = models.OneToOneField(ToDoList, on_delete=models.CASCADE, null=True)
+    
     def __str__(self):
         return f'FocusLog Session #{self.id}'
