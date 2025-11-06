@@ -33,7 +33,7 @@ class Task(models.Model):
 
 class Distraction(models.Model):
     distraction_name = models.CharField()
-    distraction_icon = models.ImageField(upload_to='main_app/static/images/')
+    distraction_icon = models.ImageField(upload_to='images/')
     
     def __str__(self):
         return f'{self.distraction_name.capitalize()}'
@@ -63,12 +63,14 @@ class FocusLog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     tag = models.ForeignKey(Tag, on_delete=models.SET_NULL, null=True, blank=True)
     distraction = models.ManyToManyField(Distraction)
+    focus_title = models.CharField(null=False)
     start_time = models.DurationField('Started At:', null=True, blank=True)
     end_time = models.DurationField('Ended At:', null=True, blank=True)
     total_duration =  models.DurationField(null=True, blank=True)
     focus_level = models.CharField(max_length=1, choices=FOCUS_LEVEL, null=True, blank=True)
     outcomes = models.TextField(blank=True)
     todolist = models.OneToOneField(ToDoList, on_delete=models.CASCADE, null=True)
-    
+    created_at = models.DateField(auto_now_add=True)
+
     def __str__(self):
         return f'FocusLog Session #{self.id}'

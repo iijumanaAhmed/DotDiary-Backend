@@ -110,9 +110,9 @@ class FocusLogsIndex(APIView):
         except Exception as error:
             return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class FocusLogSession(APIView):
     permission_classes = [IsAuthenticated]
+
     def get(self, request, session_id):
         try:
             queryset = get_object_or_404(FocusLog, id=session_id)
@@ -127,7 +127,7 @@ class FocusLogSession(APIView):
             return Response(data)
         except Exception as error:
             return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+    
     def put(self, request, session_id):
         try:
             queryset = get_object_or_404(FocusLog, id=session_id)
@@ -229,7 +229,7 @@ class ToDoListDetail(APIView):
             return Response(data)
         except Exception as error:
             return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+    
     def put(self, request, todolist_id):
         try:
             queryset = get_object_or_404(ToDoList, id=todolist_id)
@@ -260,7 +260,7 @@ class TasksIndex(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as error:
             return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+            
     def post(self, request, todolist_id):
         serializer = TaskSerializer(data = request.data)
         
@@ -281,7 +281,7 @@ class TaskToDo(APIView):
             return Response(serializer.data)
         except Exception as error:
             return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+    
     def put(self, request, todolist_id, task_id):
         try:
             queryset = get_object_or_404(Task.objects.filter(todolist=todolist_id), id=task_id)
