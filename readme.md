@@ -24,17 +24,19 @@ https://github.com/iijumanaAhmed/DotDiary-Frontend
 | GET  | /focusLog/:id  | displayFocusLog  | Display specific FocusLog session |
 | PUT  | /focusLog/update/:id  | updateFocusLog  | Update exsiting FocusLog |
 | DELETE  | /focusLog/delete/:id  | deleteFocusLog  | Delete exsiting FocusLog |
-| POST  | /focusLog/:id/assignTag/:id  | assignTag  | Assign tag to the FocusLog session |
-| POST  | /focusLog/:id/assignToDoList/:id  | assignToDoList  | Assign ToDoList to the FocusLog session |
-| POST  | /focusLog/:id/assignDistraction/:id  | assignDistraction  | Assign distraction to the FocusLog session |
+| GET  | /tags | displayTag  | Display all session tags to the user |
+| PATCH  | /focusLog/:id/assignDistraction/:id  | assignDistraction  | Assign distraction to the FocusLog session |
 | PATCH  | /focusLog/:id/unassignDistraction/:id  | unassignDistraction  | Unassign distraction to the FocusLog session |
 | GET  | /toDoList  | getAllToDoList  | Retrieve all the user's ToDoList |
 | POST  | /toDoList  | addToDoList  | Create new ToDoList |
 | GET  | /toDoList/:id  | displayToDoList  | Display specific ToDoList |
 | PUT  | /toDoList/update/:id  | updateToDoList  | Update exsiting ToDoList |
 | DELETE  | /toDoList/delete/:id  | deleteToDoList  | Delete exsiting ToDoList |
-| POST  | /toDoList/:id/addTask/:id  | addTask  | Add task to a specific ToDoList |
-| DELETE  | /toDoList/:id/removeTask/:id  | removeTask  | Remove task to a specific ToDoList |
+| GET  | /toDoList/:id/tasks  | getAllTasks  | Retrieve all the ToDoList's tasks |
+| POST  | /toDoList/:id/tasks  | addTask  | add task to the ToDoList |
+| GET  | /toDoList/:id/tasks  | displayTask  | display task in the ToDoList |
+| PUT  | /toDoList/:id/tasks  | updateTask  | update task in the ToDoList |
+| DELETE  | /toDoList/:id/tasks  | deleteTask  | delete task from the ToDoList |
 
 ## IceBox Features
 1. Forgot Password
